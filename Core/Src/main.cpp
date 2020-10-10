@@ -14,12 +14,11 @@ int main(void)
   system_clock_config();
   init_uart(&gh_uart2);
 
-  const char *msg = "The app is running\n";
+  const char *msg = "What's up man.\n";
   HAL_UART_Transmit(&gh_uart2, const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(msg)), strlen(msg), HAL_MAX_DELAY);
 
   for (;;)
   {
-    /* code */
   }
 
   return 0;
