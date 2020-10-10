@@ -1,4 +1,6 @@
 #include "stm32f4xx_hal.h"
+#include <cstring>
+#include <cstdint>
 
 static void system_clock_config(void);
 static void init_uart(UART_HandleTypeDef *ph);
@@ -11,6 +13,15 @@ int main(void)
   HAL_Init();
   system_clock_config();
   init_uart(&gh_uart2);
+
+  const char *msg = "The app is running\n";
+  HAL_UART_Transmit(&gh_uart2, const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(msg)), strlen(msg), HAL_MAX_DELAY);
+
+  for (;;)
+  {
+    /* code */
+  }
+
   return 0;
 }
 

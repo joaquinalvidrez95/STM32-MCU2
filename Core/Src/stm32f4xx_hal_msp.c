@@ -20,7 +20,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
   __HAL_RCC_USART2_CLK_ENABLE();
 
   /* Does the pin muxing cfgs */
-  GPIO_InitTypeDef pin_cfg={0};
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  GPIO_InitTypeDef pin_cfg = {0};
   pin_cfg.Pin = GPIO_PIN_2;
   pin_cfg.Mode = GPIO_MODE_AF_PP;
   pin_cfg.Speed = GPIO_SPEED_FREQ_LOW;
