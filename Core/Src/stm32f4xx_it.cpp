@@ -8,7 +8,7 @@
 namespace interrupt
 {
     static UART_HandleTypeDef *gph_uart = nullptr;
-    static std::function<void()> g_rx_callback;
+    static std::function<void()> g_rx_callback{};
     void set_uart_handle(UART_HandleTypeDef *ph_uart, std::function<void()> rx_callback)
     {
         gph_uart = ph_uart;
@@ -24,9 +24,10 @@ void SysTick_Handler(void)
 
 void USART2_IRQHandler(void)
 {
-	if (nullptr!= interrupt::gph_uart){
-    HAL_UART_IRQHandler(interrupt::gph_uart);
-	}
+    if (nullptr != interrupt::gph_uart)
+    {
+        HAL_UART_IRQHandler(interrupt::gph_uart);
+    }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)

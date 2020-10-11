@@ -26,13 +26,13 @@ private:
 	void receive(Mechanism mechanism);
 	void transmit();
 	void convert_to_uppercase();
-	std::array<uint8_t, 100u> bytes{0u};
+
 	UART_HandleTypeDef &h_uart;
+	std::array<uint8_t, 100u> bytes{0u};
 	size_t num_bytes_received{0u};
 	bool is_rx_done{false};
 
 	static constexpr char final_character{'\r'};
 };
-
 
 #endif /* INC_UARTECHO_H_ */
