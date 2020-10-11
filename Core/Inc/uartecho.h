@@ -10,21 +10,29 @@
 
 #include <array>
 #include <cstdint>
+
 #include "stm32f4xx_hal.h"
+#include "mechanism.h"
 
 class Uart_echo
 {
 public:
 	Uart_echo(UART_HandleTypeDef &h_uart);
-	void receive();
-	void transmit();
+	void work(Mechanism mechanism);
+	void byte_received_callback();
 	virtual ~Uart_echo();
 
 private:
+	void receive(Mechanism mechanism);
+	void transmit();
 	void convert_to_uppercase();
 	std::array<uint8_t, 100u> bytes{0u};
 	UART_HandleTypeDef &h_uart;
 	size_t num_bytes_received{0u};
+	bool is_rx_done{false};
+
+	static constexpr char final_character{'\r'};
 };
+
 
 #endif /* INC_UARTECHO_H_ */

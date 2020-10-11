@@ -2,26 +2,28 @@
 #include <cstdint>
 
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_it.h"
 #include "uartecho.h"
+#include "handles.h"
 
 static void system_clock_config(void);
-static void init_uart(UART_HandleTypeDef *ph);
-static void handle_error(void);
-
-static UART_HandleTypeDef gh_uart2 = {0};
+static UART_HandleTypeDef gh_uart2{0};
 
 int main(void)
 {
   HAL_Init();
   system_clock_config();
-  init_uart(&gh_uart2);
+  handles::init_uart(gh_uart2);
+
+//  const char *msg = "What's up man.\n";
+//  HAL_UART_Transmit(&gh_uart2, const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(msg)), strlen(msg), HAL_MAX_DELAY);
 
   Uart_echo echo{gh_uart2};
+  interrupt::set_uart_handle(&gh_uart2, std::bind(&Uart_echo::byte_received_callback, echo));
 
   for (;;)
   {
-    echo.receive();
-    echo.transmit();
+    echo.work(Mechanism::interrupt);
   }
 
   return 0;
@@ -29,27 +31,4 @@ int main(void)
 
 static void system_clock_config(void)
 {
-}
-
-static void init_uart(UART_HandleTypeDef *ph)
-{
-  ph->Instance = USART2;
-  ph->Init.BaudRate = 115200u;
-  ph->Init.WordLength = UART_WORDLENGTH_8B;
-  ph->Init.StopBits = UART_STOPBITS_1;
-  ph->Init.Parity = UART_PARITY_NONE;
-  ph->Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  ph->Init.Mode = UART_MODE_TX_RX;
-
-  if (HAL_OK != HAL_UART_Init(ph))
-  {
-    handle_error();
-  }
-}
-
-static void handle_error(void)
-{
-  for (;;)
-  {
-  }
 }
