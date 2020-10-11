@@ -1,6 +1,8 @@
-#include "stm32f4xx_hal.h"
 #include <cstring>
 #include <cstdint>
+
+#include "stm32f4xx_hal.h"
+#include "uartecho.h"
 
 static void system_clock_config(void);
 static void init_uart(UART_HandleTypeDef *ph);
@@ -14,11 +16,12 @@ int main(void)
   system_clock_config();
   init_uart(&gh_uart2);
 
-  const char *msg = "What's up man.\n";
-  HAL_UART_Transmit(&gh_uart2, const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(msg)), strlen(msg), HAL_MAX_DELAY);
+  Uart_echo echo{gh_uart2};
 
   for (;;)
   {
+    echo.receive();
+    echo.transmit();
   }
 
   return 0;
