@@ -3,7 +3,6 @@
 #include <functional>
 
 #include "stm32f4xx_hal.h"
-#include "handles.h"
 
 namespace interrupt
 {
@@ -16,13 +15,13 @@ namespace interrupt
     }
 } // namespace interrupt
 
-void SysTick_Handler(void)
+extern "C" void SysTick_Handler(void)
 {
     HAL_IncTick();
     HAL_SYSTICK_IRQHandler();
 }
 
-void USART2_IRQHandler(void)
+extern "C" void USART2_IRQHandler(void)
 {
     if (nullptr != interrupt::gph_uart)
     {
@@ -30,7 +29,7 @@ void USART2_IRQHandler(void)
     }
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+extern "C" void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (interrupt::g_rx_callback)
     {

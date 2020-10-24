@@ -33,10 +33,10 @@ void Uart_echo::receive(Mechanism mechanism)
 {
 	if (Mechanism::polling == mechanism)
 	{
-		for (num_bytes_received = 0u; num_bytes_received < bytes.size(); num_bytes_received++)
+		for (num_bytes_received = 0u; num_bytes_received < rx_tx_buf.size(); num_bytes_received++)
 		{
-			HAL_UART_Receive(&this->h_uart, &this->bytes.at(num_bytes_received), sizeof(uint8_t), HAL_MAX_DELAY);
-			if (final_character == static_cast<char>(bytes.at(num_bytes_received)))
+			HAL_UART_Receive(&this->h_uart, &this->rx_tx_buf.at(num_bytes_received), sizeof(uint8_t), HAL_MAX_DELAY);
+			if (final_character == static_cast<char>(rx_tx_buf.at(num_bytes_received)))
 			{
 				break;
 			}
@@ -44,23 +44,29 @@ void Uart_echo::receive(Mechanism mechanism)
 	}
 	else
 	{
-		this->num_bytes_received = 0u;
-		while (!is_rx_done)
+		for (num_bytes_received = 0u; num_bytes_received < rx_tx_buf.size();)
 		{
-			HAL_UART_Receive_IT(&h_uart, &this->bytes.at(num_bytes_received), sizeof(uint8_t));
+			HAL_UART_Receive_IT(&this->h_uart, &this->rx_tx_buf.at(num_bytes_received), sizeof(uint8_t));
+			while (this->h_uart.RxState != HAL_UART_STATE_READY)
+			{
+			}
+			if (final_character == static_cast<char>(rx_tx_buf.at(num_bytes_received - 1u)))
+			{
+				break;
+			}
 		}
 	}
 }
 
 void Uart_echo::transmit()
 {
-	HAL_UART_Transmit(&this->h_uart, this->bytes.data(), this->num_bytes_received, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&this->h_uart, const_cast<uint8_t *>(this->rx_tx_buf.data()), this->num_bytes_received, HAL_MAX_DELAY);
 }
 
 void Uart_echo::convert_to_uppercase()
 {
-	const auto end = bytes.begin() + this->num_bytes_received;
-	for (auto it = bytes.begin(); it != end; it++)
+	const auto end = rx_tx_buf.begin() + this->num_bytes_received;
+	for (auto it = rx_tx_buf.begin(); it != end; it++)
 	{
 		*it = std::toupper(*it);
 	}
@@ -68,9 +74,5 @@ void Uart_echo::convert_to_uppercase()
 
 void Uart_echo::byte_received_callback()
 {
-	if (final_character == static_cast<char>(bytes.at(num_bytes_received)))
-	{
-		this->is_rx_done = true;
-	}
-	this->num_bytes_received++;
+	num_bytes_received++;
 }
