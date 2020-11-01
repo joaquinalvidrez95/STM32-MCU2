@@ -54,13 +54,12 @@ extern "C"
   /* Exported functions prototypes ---------------------------------------------*/
 
   /* USER CODE BEGIN EFP */
-
-  /* USER CODE END EFP */
-
   namespace interrupt
   {
     void set_uart_handle(UART_HandleTypeDef *ph_uart, std::function<void()> rx_callback);
   } // namespace interrupt
+
+  /* USER CODE END EFP */
 
 #ifdef __cplusplus
 }
