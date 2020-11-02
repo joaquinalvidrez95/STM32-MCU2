@@ -56,7 +56,7 @@ extern "C"
   /* USER CODE BEGIN EFP */
   namespace interrupt
   {
-    void set_uart_handle(UART_HandleTypeDef *ph_uart, std::function<void()> rx_callback);
+    void set_timer_handle(TIM_HandleTypeDef *ph);
   } // namespace interrupt
 
   /* USER CODE END EFP */

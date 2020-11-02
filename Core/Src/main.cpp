@@ -15,16 +15,12 @@ int main(void)
   system_clock_config();
   TIM_HandleTypeDef h_timer_6{0};
   handles::init_timer_6(h_timer_6);
+  interrupt::set_timer_handle(&h_timer_6);
   Nucleo_board::init_led();
-  HAL_TIM_Base_Start(&h_timer_6);
+  HAL_TIM_Base_Start_IT(&h_timer_6);
 
   for (;;)
   {
-    while (!(h_timer_6.Instance->SR & TIM_SR_UIF))
-    {
-    }
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-    TIM6->SR = 0u;
   }
 
   return 0;

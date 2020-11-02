@@ -1,18 +1,16 @@
 #include "stm32f4xx_it.h"
 
-#include <functional>
-
 #include "stm32f4xx_hal.h"
+#include "stm32f446xx.h"
 
 namespace interrupt
 {
-    static UART_HandleTypeDef *gph_uart = nullptr;
-    static std::function<void()> g_rx_callback{};
-    void set_uart_handle(UART_HandleTypeDef *ph_uart, std::function<void()> rx_callback)
+    static TIM_HandleTypeDef *gph_timer = nullptr;
+    void set_timer_handle(TIM_HandleTypeDef *ph)
     {
-        gph_uart = ph_uart;
-        g_rx_callback = rx_callback;
+        gph_timer = ph;
     }
+
 } // namespace interrupt
 
 extern "C" void SysTick_Handler(void)
@@ -21,18 +19,15 @@ extern "C" void SysTick_Handler(void)
     HAL_SYSTICK_IRQHandler();
 }
 
-extern "C" void USART2_IRQHandler(void)
+extern "C" void TIM6_DAC_IRQHandler(void)
 {
-    if (nullptr != interrupt::gph_uart)
+    if (nullptr != interrupt::gph_timer)
     {
-        HAL_UART_IRQHandler(interrupt::gph_uart);
+        HAL_TIM_IRQHandler(interrupt::gph_timer);
     }
 }
 
-extern "C" void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (interrupt::g_rx_callback)
-    {
-        interrupt::g_rx_callback();
-    }
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 }
