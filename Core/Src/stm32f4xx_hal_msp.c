@@ -1,4 +1,6 @@
 #include "stm32f4xx_hal.h"
+#include "stm32f446xx.h"
+#include "stm32f4xx_hal_gpio_ex.h"
 
 void HAL_MspInit(void)
 {
@@ -14,27 +16,10 @@ void HAL_MspInit(void)
   HAL_NVIC_SetPriority(UsageFault_IRQn, 0u, 0u);
 }
 
-void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *ph)
 {
-  /* Enables clock for USART2 peripheral */
-  __HAL_RCC_USART2_CLK_ENABLE();
+  __HAL_RCC_TIM6_CLK_ENABLE();
 
-  /* Does the pin muxing cfgs */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  GPIO_InitTypeDef pin_cfg = {0};
-  pin_cfg.Pin = GPIO_PIN_2;
-  pin_cfg.Mode = GPIO_MODE_AF_PP;
-  pin_cfg.Speed = GPIO_SPEED_FREQ_LOW;
-  pin_cfg.Pull = GPIO_PULLUP;
-  pin_cfg.Alternate = GPIO_AF7_USART2;
-  /* Tx */
-  HAL_GPIO_Init(GPIOA, &pin_cfg);
-
-  /* Rx */
-  pin_cfg.Pin = GPIO_PIN_3;
-  HAL_GPIO_Init(GPIOA, &pin_cfg);
-
-  /* Enables the IRQ ans sets up the priority */
-  HAL_NVIC_EnableIRQ(USART2_IRQn);
-  HAL_NVIC_SetPriority(USART2_IRQn, 15u, 0u);
+  HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+  HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 15u, 0u);
 }

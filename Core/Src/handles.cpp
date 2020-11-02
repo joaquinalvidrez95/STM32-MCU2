@@ -8,6 +8,7 @@
 #include "handles.h"
 
 #include "stm32f4xx_hal.h"
+#include "stm32f446xx.h"
 
 namespace handles
 {
@@ -24,6 +25,17 @@ namespace handles
         h.Init.Mode = UART_MODE_TX_RX;
 
         if (HAL_OK != HAL_UART_Init(&h))
+        {
+            handle_error();
+        }
+    }
+
+    void init_timer_6(TIM_HandleTypeDef &h)
+    {
+        h.Instance = TIM6;
+        h.Init.Prescaler = 24u;
+        h.Init.Period = 64000u - 1u;
+        if (HAL_OK != HAL_TIM_Base_Init(&h))
         {
             handle_error();
         }

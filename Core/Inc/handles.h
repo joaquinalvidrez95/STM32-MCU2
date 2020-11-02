@@ -13,6 +13,7 @@
 namespace handles
 {
     void init_uart(UART_HandleTypeDef &h);
+    void init_timer_6(TIM_HandleTypeDef &h);
 
 } // namespace handles
 
